@@ -13,6 +13,22 @@ A production-ready security scanner that detects leaked marketplace tokens, GitH
 
 This tool scans local repositories or fetches files from remote GitHub repositories to identify accidentally committed secrets. It uses pattern matching with severity scoring to minimize false positives and provides actionable reports in JSON and CSV formats.
 
+### Why This Tool Exists
+
+This scanner was developed in response to real-world security incidents involving IDE extensions and marketplace plugins. Developers building extensions for VS Code, Open VSX, and similar marketplaces often need to publish their work using tokens or PATs. These credentials can accidentally end up committed in:
+
+- CI/CD workflow files (`.github/workflows/*.yml`)
+- Configuration files (`.npmrc`, `package.json`)
+- Documentation and example files
+- Deployment scripts and Dockerfiles
+
+When extension developers inadvertently commit their marketplace tokens, attackers can:
+- Hijack legitimate extensions by publishing malicious updates
+- Steal user data or inject malware into popular extensions
+- Compromise the supply chain for thousands of users
+
+This tool helps prevent these supply-chain attacks by detecting leaked tokens before they're pushed to public repositories, enabling teams to rotate credentials and secure their release pipelines proactively.
+
 ## Features
 
 - Detects GitHub tokens (ghp_, gho_, ghu_, ghs_, ghr_ prefixes)
