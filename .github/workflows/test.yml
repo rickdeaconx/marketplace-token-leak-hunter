@@ -92,7 +92,7 @@ jobs:
 
       - name: Run scanner against sample data
         run: |
-          python -m src.scan_repo --path sample-data/repo-sample --out test-report.json --csv test-report.csv
+          python -m src.scan_repo --path sample-data/repo-sample --out test-report.json --csv test-report.csv || true
 
       - name: Verify scan found issues
         run: |

@@ -33,10 +33,10 @@ def scan_file(file_path: str, content: str, rules: List[Dict]) -> List[Dict[str,
         List of findings with path, line, rule_id, desc, match, score, snippet
     """
     findings = []
-    lines = content.split('\n')
+    lines = content.split("\n")
 
     for rule in rules:
-        pattern = rule['pattern']
+        pattern = rule["pattern"]
         for line_num, line in enumerate(lines, start=1):
             matches = pattern.finditer(line)
             for match in matches:
@@ -47,19 +47,19 @@ def scan_file(file_path: str, content: str, rules: List[Dict]) -> List[Dict[str,
                     continue
 
                 # Calculate score with path boost
-                score = apply_path_boost(rule['score'], file_path)
+                score = apply_path_boost(rule["score"], file_path)
 
                 # Create snippet (80 char context)
                 snippet = line.strip()[:80]
 
                 finding = {
-                    'path': file_path,
-                    'line': line_num,
-                    'rule_id': rule['id'],
-                    'desc': rule['description'],
-                    'match': redact_token(matched_text),
-                    'score': score,
-                    'snippet': snippet
+                    "path": file_path,
+                    "line": line_num,
+                    "rule_id": rule["id"],
+                    "desc": rule["description"],
+                    "match": redact_token(matched_text),
+                    "score": score,
+                    "snippet": snippet,
                 }
                 findings.append(finding)
 
@@ -81,7 +81,20 @@ def scan_path(root_path: str) -> List[Dict[str, Any]]:
 
     for dirpath, dirnames, filenames in os.walk(root_path):
         # Skip common non-code directories
-        dirnames[:] = [d for d in dirnames if d not in {'.git', 'node_modules', '__pycache__', '.venv', 'venv', 'dist', 'build'}]
+        dirnames[:] = [
+            d
+            for d in dirnames
+            if d
+            not in {
+                ".git",
+                "node_modules",
+                "__pycache__",
+                ".venv",
+                "venv",
+                "dist",
+                "build",
+            }
+        ]
 
         for filename in filenames:
             full_path = os.path.join(dirpath, filename)
@@ -92,7 +105,7 @@ def scan_path(root_path: str) -> List[Dict[str, Any]]:
                 continue
 
             try:
-                with open(full_path, 'r', encoding='utf-8', errors='ignore') as f:
+                with open(full_path, "r", encoding="utf-8", errors="ignore") as f:
                     content = f.read()
                     findings = scan_file(rel_path, content, rules)
                     all_findings.extend(findings)
@@ -121,8 +134,8 @@ def scan_remote(repo: str, github_token: str) -> List[Dict[str, Any]]:
     files = fetch_repo_files(repo, github_token)
 
     for file_info in files:
-        path = file_info['path']
-        content = file_info['content']
+        path = file_info["path"]
+        content = file_info["content"]
 
         findings = scan_file(path, content, rules)
         all_findings.extend(findings)
@@ -142,7 +155,7 @@ def determine_exit_code(findings: List[Dict[str, Any]]) -> int:
     if not findings:
         return 0
 
-    max_score = max(f['score'] for f in findings)
+    max_score = max(f["score"] for f in findings)
 
     if max_score >= 90:
         return 2
@@ -161,9 +174,9 @@ def print_summary(findings: List[Dict[str, Any]]) -> None:
     print(f"\n⚠ Found {len(findings)} potential token leak(s):\n")
 
     # Group by severity
-    critical = [f for f in findings if f['score'] >= 90]
-    high = [f for f in findings if 70 <= f['score'] < 90]
-    medium = [f for f in findings if f['score'] < 70]
+    critical = [f for f in findings if f["score"] >= 90]
+    high = [f for f in findings if 70 <= f["score"] < 90]
+    medium = [f for f in findings if f["score"] < 70]
 
     if critical:
         print(f"  CRITICAL (score >= 90): {len(critical)} finding(s)")
@@ -183,16 +196,18 @@ def print_summary(findings: List[Dict[str, Any]]) -> None:
 
 def main():
     parser = argparse.ArgumentParser(
-        description='Scan repositories for leaked marketplace tokens and credentials.'
+        description="Scan repositories for leaked marketplace tokens and credentials."
     )
 
     mode_group = parser.add_mutually_exclusive_group(required=True)
-    mode_group.add_argument('--path', help='Local repository path to scan')
-    mode_group.add_argument('--repo', help='Remote repository (owner/name) to scan via GitHub API')
+    mode_group.add_argument("--path", help="Local repository path to scan")
+    mode_group.add_argument(
+        "--repo", help="Remote repository (owner/name) to scan via GitHub API"
+    )
 
-    parser.add_argument('--github-token', help='GitHub API token for remote mode')
-    parser.add_argument('--out', default='leak-report.json', help='JSON output file')
-    parser.add_argument('--csv', default='leak-report.csv', help='CSV output file')
+    parser.add_argument("--github-token", help="GitHub API token for remote mode")
+    parser.add_argument("--out", default="leak-report.json", help="JSON output file")
+    parser.add_argument("--csv", default="leak-report.csv", help="CSV output file")
 
     args = parser.parse_args()
 
@@ -201,14 +216,20 @@ def main():
 
     if args.path:
         if not os.path.isdir(args.path):
-            print(f"Error: Path '{args.path}' does not exist or is not a directory.", file=sys.stderr)
+            print(
+                f"Error: Path '{args.path}' does not exist or is not a directory.",
+                file=sys.stderr,
+            )
             sys.exit(3)
         findings = scan_path(args.path)
 
     elif args.repo:
         if not args.github_token:
             print("Error: --github-token required for remote mode.", file=sys.stderr)
-            print("GitHub token needs 'repo' or 'public_repo' read scope.", file=sys.stderr)
+            print(
+                "GitHub token needs 'repo' or 'public_repo' read scope.",
+                file=sys.stderr,
+            )
             sys.exit(3)
         findings = scan_remote(args.repo, args.github_token)
 
@@ -222,12 +243,17 @@ def main():
     # Exit with appropriate code
     exit_code = determine_exit_code(findings)
     if exit_code == 2:
-        print("⛔ Exiting with code 2: High confidence leak(s) detected.", file=sys.stderr)
+        print(
+            "⛔ Exiting with code 2: High confidence leak(s) detected.", file=sys.stderr
+        )
     elif exit_code == 1:
-        print("⚠ Exiting with code 1: Medium confidence leak(s) detected.", file=sys.stderr)
+        print(
+            "⚠ Exiting with code 1: Medium confidence leak(s) detected.",
+            file=sys.stderr,
+        )
 
     sys.exit(exit_code)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

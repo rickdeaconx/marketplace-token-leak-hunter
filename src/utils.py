@@ -48,9 +48,9 @@ def is_binary_file(file_path: str) -> bool:
         True if file appears binary
     """
     try:
-        with open(file_path, 'rb') as f:
+        with open(file_path, "rb") as f:
             chunk = f.read(4096)
-            if b'\x00' in chunk:
+            if b"\x00" in chunk:
                 return True
     except (IOError, OSError):
         return True
@@ -76,25 +76,29 @@ def fetch_repo_files(repo: str, github_token: str) -> List[Dict[str, str]]:
         SystemExit on API errors
     """
     headers = {
-        'Authorization': f'token {github_token}',
-        'Accept': 'application/vnd.github.v3+json'
+        "Authorization": f"token {github_token}",
+        "Accept": "application/vnd.github.v3+json",
     }
 
     # Get default branch
     print(f"Fetching repository info for {repo}...", file=sys.stderr)
-    repo_url = f'https://api.github.com/repos/{repo}'
+    repo_url = f"https://api.github.com/repos/{repo}"
     try:
         resp = requests.get(repo_url, headers=headers, timeout=30)
         resp.raise_for_status()
     except requests.exceptions.RequestException as e:
         print(f"Error fetching repository info: {e}", file=sys.stderr)
-        print("Check repository name, token validity, and rate limits.", file=sys.stderr)
+        print(
+            "Check repository name, token validity, and rate limits.", file=sys.stderr
+        )
         sys.exit(3)
 
-    default_branch = resp.json().get('default_branch', 'main')
+    default_branch = resp.json().get("default_branch", "main")
 
     # Get tree
-    tree_url = f'https://api.github.com/repos/{repo}/git/trees/{default_branch}?recursive=1'
+    tree_url = (
+        f"https://api.github.com/repos/{repo}/git/trees/{default_branch}?recursive=1"
+    )
     try:
         resp = requests.get(tree_url, headers=headers, timeout=30)
         resp.raise_for_status()
@@ -102,21 +106,44 @@ def fetch_repo_files(repo: str, github_token: str) -> List[Dict[str, str]]:
         print(f"Error fetching repository tree: {e}", file=sys.stderr)
         sys.exit(3)
 
-    tree = resp.json().get('tree', [])
+    tree = resp.json().get("tree", [])
 
     # Filter text files
-    text_extensions = {'.yml', '.yaml', '.json', '.txt', '.md', '.sh', '.py', '.js', '.ts', '.java', '.go', '.rs', '.c', '.cpp', '.h', '.env', '.npmrc', '.gitignore'}
+    text_extensions = {
+        ".yml",
+        ".yaml",
+        ".json",
+        ".txt",
+        ".md",
+        ".sh",
+        ".py",
+        ".js",
+        ".ts",
+        ".java",
+        ".go",
+        ".rs",
+        ".c",
+        ".cpp",
+        ".h",
+        ".env",
+        ".npmrc",
+        ".gitignore",
+    }
     target_files = []
 
     for item in tree:
-        if item['type'] != 'blob':
+        if item["type"] != "blob":
             continue
 
-        path = item['path']
+        path = item["path"]
 
         # Include by extension or specific names
         _, ext = os.path.splitext(path)
-        if ext.lower() in text_extensions or os.path.basename(path) in {'.npmrc', 'Dockerfile', 'package.json'}:
+        if ext.lower() in text_extensions or os.path.basename(path) in {
+            ".npmrc",
+            "Dockerfile",
+            "package.json",
+        }:
             target_files.append(path)
 
     # Fetch file contents
@@ -124,16 +151,19 @@ def fetch_repo_files(repo: str, github_token: str) -> List[Dict[str, str]]:
     print(f"Fetching {len(target_files)} file(s)...", file=sys.stderr)
 
     for path in target_files:
-        content_url = f'https://api.github.com/repos/{repo}/contents/{path}'
+        content_url = f"https://api.github.com/repos/{repo}/contents/{path}"
         try:
             resp = requests.get(content_url, headers=headers, timeout=30)
             resp.raise_for_status()
 
             content_data = resp.json()
-            if content_data.get('encoding') == 'base64':
+            if content_data.get("encoding") == "base64":
                 import base64
-                content = base64.b64decode(content_data['content']).decode('utf-8', errors='ignore')
-                files_data.append({'path': path, 'content': content})
+
+                content = base64.b64decode(content_data["content"]).decode(
+                    "utf-8", errors="ignore"
+                )
+                files_data.append({"path": path, "content": content})
 
         except requests.exceptions.RequestException as e:
             print(f"Warning: Could not fetch {path}: {e}", file=sys.stderr)

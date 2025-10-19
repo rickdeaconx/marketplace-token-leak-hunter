@@ -59,20 +59,22 @@ def test_scan_sample_repo():
 
     # Validate finding structure
     for finding in findings:
-        assert 'path' in finding, "Finding should have 'path'"
-        assert 'line' in finding, "Finding should have 'line'"
-        assert 'rule_id' in finding, "Finding should have 'rule_id'"
-        assert 'desc' in finding, "Finding should have 'desc'"
-        assert 'match' in finding, "Finding should have 'match'"
-        assert 'score' in finding, "Finding should have 'score'"
-        assert 'snippet' in finding, "Finding should have 'snippet'"
+        assert "path" in finding, "Finding should have 'path'"
+        assert "line" in finding, "Finding should have 'line'"
+        assert "rule_id" in finding, "Finding should have 'rule_id'"
+        assert "desc" in finding, "Finding should have 'desc'"
+        assert "match" in finding, "Finding should have 'match'"
+        assert "score" in finding, "Finding should have 'score'"
+        assert "snippet" in finding, "Finding should have 'snippet'"
 
         # Verify score is valid
-        assert 0 <= finding['score'] <= 100, "Score should be 0-100"
+        assert 0 <= finding["score"] <= 100, "Score should be 0-100"
 
         # Verify redaction occurred (no full fake tokens in output)
-        if len(finding['match']) > 12:
-            assert '***REDACTED***' in finding['match'], "Long tokens should be redacted"
+        if len(finding["match"]) > 12:
+            assert (
+                "***REDACTED***" in finding["match"]
+            ), "Long tokens should be redacted"
 
 
 def test_exit_code_logic():
@@ -81,16 +83,16 @@ def test_exit_code_logic():
     assert determine_exit_code([]) == 0
 
     # Low score
-    assert determine_exit_code([{'score': 50}]) == 0
+    assert determine_exit_code([{"score": 50}]) == 0
 
     # Medium score
-    assert determine_exit_code([{'score': 75}]) == 1
+    assert determine_exit_code([{"score": 75}]) == 1
 
     # High score
-    assert determine_exit_code([{'score': 95}]) == 2
+    assert determine_exit_code([{"score": 95}]) == 2
 
     # Mixed scores - highest wins
-    assert determine_exit_code([{'score': 50}, {'score': 75}, {'score': 95}]) == 2
+    assert determine_exit_code([{"score": 50}, {"score": 75}, {"score": 95}]) == 2
 
 
 def test_cli_integration():
@@ -107,25 +109,36 @@ def test_cli_integration():
 
         # Run scanner
         result = subprocess.run(
-            [sys.executable, "-m", "src.scan_repo",
-             "--path", sample_path,
-             "--out", json_out,
-             "--csv", csv_out],
+            [
+                sys.executable,
+                "-m",
+                "src.scan_repo",
+                "--path",
+                sample_path,
+                "--out",
+                json_out,
+                "--csv",
+                csv_out,
+            ],
             capture_output=True,
-            text=True
+            text=True,
         )
 
         # Should exit with code 1 or 2 (findings expected)
-        assert result.returncode in [0, 1, 2], f"Exit code should be 0, 1, or 2, got {result.returncode}"
+        assert result.returncode in [
+            0,
+            1,
+            2,
+        ], f"Exit code should be 0, 1, or 2, got {result.returncode}"
 
         # Check JSON output exists and is valid
         assert os.path.exists(json_out), "JSON output file should exist"
 
-        with open(json_out, 'r') as f:
+        with open(json_out, "r") as f:
             report = json.load(f)
-            assert 'scan_summary' in report
-            assert 'findings' in report
-            assert isinstance(report['findings'], list)
+            assert "scan_summary" in report
+            assert "findings" in report
+            assert isinstance(report["findings"], list)
 
         # Check CSV output exists
         assert os.path.exists(csv_out), "CSV output file should exist"
