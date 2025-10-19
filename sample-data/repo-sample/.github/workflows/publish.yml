@@ -1,0 +1,48 @@
+# Sample CI workflow with intentional fake token leaks for testing
+
+name: Publish to Marketplace
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Publish to npm
+        env:
+          # WARNING: This is a fake token for testing purposes only
+          NPM_TOKEN: "npm_FAKE_TOKEN_abc123xyz789_NOT_REAL"
+        run: npm publish
+
+      - name: Publish to Open VSX
+        env:
+          # WARNING: This is a fake token for testing purposes only
+          OPENVSX_PAT: "openvsx_FAKE_PAT_test123456789"
+        run: npx ovsx publish
+
+      - name: Create GitHub Release
+        env:
+          # This should not trigger - using secrets correctly
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release create v1.0.0
+
+      - name: Bad practice example
+        run: |
+          # WARNING: Hardcoded fake GitHub token - never do this!
+          export GH_TOKEN="ghp_FAKE_TOKEN_1234567890ABCDEFGHIJKLMNOPQR"
+          echo "This is bad practice"

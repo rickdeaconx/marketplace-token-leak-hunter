@@ -1,0 +1,35 @@
+# Allowlist for Marketplace Token Leak Hunter
+#
+# Add tokens that should be ignored by the scanner.
+# One token per line. Lines starting with # are comments.
+#
+# Copyright (c) 2025 Rick Deacon / Knostic Labs
+#
+# USAGE:
+# 1. Copy this file to 'allowlist.txt' in your repository root
+# 2. Add known false positives (one per line)
+# 3. Keep this file in .gitignore if it contains sensitive patterns
+#
+# WARNING: Only add tokens you are CERTAIN are safe
+# - Documentation examples with FAKE prefix
+# - Test fixtures with synthetic data
+# - Placeholder values in templates
+#
+# DO NOT add actual rotated production tokens to allowlist
+
+# Example: Documentation tokens with FAKE prefix
+ghp_EXAMPLE_TOKEN_FOR_DOCUMENTATION_ONLY
+npm_SAMPLE_TOKEN_IN_README_FILE
+
+# Example: Test fixtures
+test_fake_token_abc123xyz
+TEST_API_KEY_placeholder_12345
+
+# Example: Placeholder values
+YOUR_TOKEN_HERE
+REPLACE_WITH_ACTUAL_TOKEN
+<YOUR_API_KEY>
+
+# Example: Known safe patterns in templates
+$(SECRET_NAME)
+${TOKEN_VARIABLE}

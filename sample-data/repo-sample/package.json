@@ -1,0 +1,21 @@
+{
+  "name": "sample-vscode-extension",
+  "version": "1.0.0",
+  "description": "Sample VS Code extension for testing",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "echo \"Building...\"",
+    "publish": "echo \"Publishing...\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/example/sample-extension"
+  },
+  "keywords": [
+    "vscode",
+    "extension"
+  ],
+  "author": "Test Author",
+  "license": "MIT"
+}

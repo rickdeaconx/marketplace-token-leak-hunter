@@ -1,0 +1,54 @@
+name: Marketplace Token Leak Hunter
+
+on:
+  push:
+    branches: ['*']
+  workflow_dispatch:
+    inputs:
+      fail_on_high:
+        description: 'Fail job on high confidence findings'
+        required: false
+        type: boolean
+        default: true
+
+jobs:
+  scan-for-leaks:
+    runs-on: ubuntu-latest
+    name: Scan for token leaks
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install requests pytest
+
+      - name: Run token leak scanner
+        id: scan
+        continue-on-error: true
+        run: |
+          python -m src.scan_repo --path . --out leak-report.json --csv leak-report.csv
+
+      - name: Upload scan results
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: leak-scan-report
+          path: |
+            leak-report.json
+            leak-report.csv
+          retention-days: 90
+
+      - name: Check scan results and fail if needed
+        if: steps.scan.outcome == 'failure' && (github.event.inputs.fail_on_high == 'true' || github.event.inputs.fail_on_high == '')
+        run: |
+          echo "::error::High confidence token leak(s) detected! Review the uploaded artifact for details."
+          echo "Scan exited with code indicating critical findings."
+          echo "Action: Review leak-report.json, revoke any leaked tokens, and rotate credentials."
+          exit 1
