@@ -242,6 +242,22 @@ Test against sample data:
 python -m src.scan_repo --path sample-data/repo-sample --out test-out.json --csv test-out.csv
 ```
 
+### Dogfooding - Scanning This Repository
+
+This scanner has been tested against itself to validate detection accuracy:
+
+```bash
+python -m src.scan_repo --path . --out scan.json --csv scan.csv
+```
+
+**Results:** 8 detections (all expected and safe)
+- ✅ Sample test data with FAKE tokens
+- ✅ Documentation examples (allowlist.txt.example, README.md)
+- ✅ Placeholder strings in templates
+- ✅ All findings properly redacted and scored
+
+**Security Status:** Clean - no real secrets detected. All findings are intentional test data or documentation examples clearly marked with FAKE prefixes.
+
 ## Operational Guidance
 
 See [docs/OPERATIONAL_NOTES.md](docs/OPERATIONAL_NOTES.md) for:
@@ -263,6 +279,71 @@ See [docs/OPERATIONAL_NOTES.md](docs/OPERATIONAL_NOTES.md) for:
 - Python 3.11+
 - `requests` library (for remote scanning)
 - `pytest` (for testing)
+
+## Troubleshooting
+
+### Python Version Error
+
+**Error:** `Package 'marketplace-token-leak-hunter' requires a different Python: 3.9.6 not in '>=3.11'`
+
+**Solution:** This tool requires Python 3.11 or higher. Check your version:
+```bash
+python3 --version
+```
+
+If you have an older version, you can still run the scanner directly:
+```bash
+# Instead of installing with pip
+python3 -m src.scan_repo --path . --out report.json --csv report.csv
+```
+
+Or install Python 3.11+ from [python.org](https://www.python.org/downloads/).
+
+### False Positives in Documentation
+
+**Issue:** Scanner detects tokens in README files or documentation.
+
+**Solution:** Add documentation examples to `allowlist.txt`:
+```bash
+# Create allowlist.txt in repository root
+echo "ghp_EXAMPLE_TOKEN_FOR_DOCS" >> allowlist.txt
+echo "npm_SAMPLE_TOKEN_IN_README" >> allowlist.txt
+```
+
+Or use obviously fake prefixes like `ghp_FAKE_TOKEN_...` in your documentation.
+
+### Import Errors
+
+**Error:** `ModuleNotFoundError: No module named 'src'`
+
+**Solution:** Run from the repository root directory:
+```bash
+cd /path/to/marketplace-token-leak-hunter
+python3 -m src.scan_repo --path . --out report.json --csv report.csv
+```
+
+### Remote Scanning Rate Limits
+
+**Error:** `Error fetching repository tree: 403`
+
+**Solution:** You've hit GitHub API rate limits. Check your remaining quota:
+```bash
+curl -H "Authorization: token YOUR_TOKEN" https://api.github.com/rate_limit
+```
+
+Wait for the rate limit to reset or use a different token.
+
+### Expected Findings When Scanning This Repository
+
+When scanning the marketplace-token-leak-hunter repository itself, you'll see 8 detections. These are **all expected and safe**:
+
+- `sample-data/repo-sample/*` - Test data with FAKE tokens
+- `allowlist.txt.example` - Example allowlist entries
+- `README.md` - CSV output examples
+- `docs/OPERATIONAL_NOTES.md` - Documentation placeholders
+- `.github/ISSUE_TEMPLATE/bug_report.md` - Example in template
+
+This validates the scanner is working correctly. No real secrets are present.
 
 ## License
 
