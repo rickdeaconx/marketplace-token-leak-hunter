@@ -60,6 +60,9 @@ Never include real tokens in issues or pull requests.
 git clone https://github.com/YOUR_USERNAME/marketplace-token-leak-hunter.git
 cd marketplace-token-leak-hunter
 
+# Add upstream remote
+git remote add upstream https://github.com/rickdeaconx/marketplace-token-leak-hunter.git
+
 # Create virtual environment
 python3 -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate

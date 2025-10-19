@@ -11,7 +11,7 @@
 ### Option 1: Clone from GitHub
 
 ```bash
-git clone https://github.com/knostic-labs/marketplace-token-leak-hunter.git
+git clone https://github.com/rickdeaconx/marketplace-token-leak-hunter.git
 cd marketplace-token-leak-hunter
 pip install -r requirements.txt
 ```
@@ -20,7 +20,7 @@ pip install -r requirements.txt
 
 ```bash
 # Install directly from GitHub
-pip install git+https://github.com/knostic-labs/marketplace-token-leak-hunter.git
+pip install git+https://github.com/rickdeaconx/marketplace-token-leak-hunter.git
 
 # Or install in development mode (if you cloned the repo)
 cd marketplace-token-leak-hunter
@@ -61,7 +61,7 @@ jobs:
       - uses: actions/setup-python@v4
         with:
           python-version: '3.11'
-      - run: pip install git+https://github.com/knostic-labs/marketplace-token-leak-hunter.git
+      - run: pip install git+https://github.com/rickdeaconx/marketplace-token-leak-hunter.git
       - run: token-leak-hunter --path . --out report.json --csv report.csv
 ```
 
@@ -69,7 +69,7 @@ jobs:
 
 ```bash
 # Clone the repository
-git clone https://github.com/knostic-labs/marketplace-token-leak-hunter.git
+git clone https://github.com/rickdeaconx/marketplace-token-leak-hunter.git
 cd marketplace-token-leak-hunter
 
 # Create virtual environment

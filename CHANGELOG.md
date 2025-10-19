@@ -84,5 +84,5 @@ To report security vulnerabilities, see [SECURITY.md](SECURITY.md).
 
 **Copyright (c) 2025 Rick Deacon / Knostic Labs**
 
-[Unreleased]: https://github.com/knostic-labs/marketplace-token-leak-hunter/compare/v1.0.0...HEAD
-[1.0.0]: https://github.com/knostic-labs/marketplace-token-leak-hunter/releases/tag/v1.0.0
+[Unreleased]: https://github.com/rickdeaconx/marketplace-token-leak-hunter/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/rickdeaconx/marketplace-token-leak-hunter/releases/tag/v1.0.0

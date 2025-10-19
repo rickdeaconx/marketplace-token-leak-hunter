@@ -21,12 +21,12 @@ setup(
     description="Security scanner for detecting leaked marketplace tokens and credentials",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/knostic-labs/marketplace-token-leak-hunter",
+    url="https://github.com/rickdeaconx/marketplace-token-leak-hunter",
     project_urls={
-        "Bug Tracker": "https://github.com/knostic-labs/marketplace-token-leak-hunter/issues",
-        "Documentation": "https://github.com/knostic-labs/marketplace-token-leak-hunter/blob/master/README.md",
-        "Source Code": "https://github.com/knostic-labs/marketplace-token-leak-hunter",
-        "Security": "https://github.com/knostic-labs/marketplace-token-leak-hunter/blob/master/SECURITY.md",
+        "Bug Tracker": "https://github.com/rickdeaconx/marketplace-token-leak-hunter/issues",
+        "Documentation": "https://github.com/rickdeaconx/marketplace-token-leak-hunter/blob/master/README.md",
+        "Source Code": "https://github.com/rickdeaconx/marketplace-token-leak-hunter",
+        "Security": "https://github.com/rickdeaconx/marketplace-token-leak-hunter/blob/master/SECURITY.md",
     },
     packages=find_packages(exclude=["tests", "tests.*", "sample-data"]),
     classifiers=[
