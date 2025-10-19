@@ -65,3 +65,9 @@ out.json
 out.csv
 test-out.json
 test-out.csv
+
+# Internal/local files (not for public repo)
+PROJECT_STATUS.md
+RELEASE_CHECKLIST.md
+TODO.md
+NOTES.md
