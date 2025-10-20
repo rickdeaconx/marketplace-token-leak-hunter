@@ -10,9 +10,9 @@
 
 Instead, please report security issues via:
 
-1. **Email**: security@knosticlabs.com (if available)
+1. **Email**: rickdeaconx@gmail.com
 2. **GitHub Security Advisory**: Use the "Report a vulnerability" button in the Security tab
-3. **Direct contact**: Contact Rick Deacon directly through GitHub
+3. **GitHub**: Contact Rick Deacon directly through GitHub
 
 ### What to Include
 
@@ -147,7 +147,7 @@ Security researchers who responsibly disclose vulnerabilities will be:
 For questions about this security policy:
 
 - Open a discussion on GitHub
-- Email: security@knosticlabs.com
+- Email: rickdeaconx@gmail.com
 - Contact Rick Deacon via GitHub
 
 Thank you for helping keep Marketplace Token Leak Hunter and its users secure!
