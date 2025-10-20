@@ -82,6 +82,22 @@ def get_rules() -> List[Dict]:
             "score": 85,
         },
         {
+            "id": "vsce_pat",
+            "description": "VS Code Marketplace VSCE_PAT (Azure DevOps PAT)",
+            "pattern": re.compile(
+                r'VSCE_PAT\s*[:=]\s*["\']?([A-Za-z0-9\-_]{20,})["\']?'
+            ),
+            "score": 90,
+        },
+        {
+            "id": "ovsx_pat",
+            "description": "Open VSX OVSX_PAT (Azure DevOps PAT)",
+            "pattern": re.compile(
+                r'OVSX_PAT\s*[:=]\s*["\']?([A-Za-z0-9\-_]{20,})["\']?'
+            ),
+            "score": 90,
+        },
+        {
             "id": "openvsx_token",
             "description": "Open VSX token reference",
             "pattern": re.compile(

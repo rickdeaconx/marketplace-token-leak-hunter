@@ -52,18 +52,25 @@ ghu_[A-Za-z0-9_]{36,}  # GitHub user-to-server token
 ghs_[A-Za-z0-9_]{36,}  # GitHub server-to-server token
 ghr_[A-Za-z0-9_]{36,}  # GitHub refresh token
 ```
+✅ **Verified**: These are the official GitHub token formats (2025)
 
 **npm Publishing Tokens:**
 ```regex
 _authToken\s*=\s*[A-Za-z0-9\-_]{20,}           # npm _authToken in .npmrc
 NPM_TOKEN\s*[:=]\s*["\']?([A-Za-z0-9\-_]{20,}) # NPM_TOKEN env var
 ```
+✅ **Verified**: Standard npm authentication format
 
-**Open VSX Marketplace:**
+**VS Code Marketplace / Open VSX:**
 ```regex
-OPENVSX_TOKEN\s*[:=]\s*["\']?([A-Za-z0-9\-_]{20,})  # Open VSX token
-OPENVSX_PAT\s*[:=]\s*["\']?([A-Za-z0-9\-_]{20,})    # Open VSX PAT
+VSCE_PAT\s*[:=]\s*["\']?([A-Za-z0-9\-_]{20,})       # VSCE environment variable
+OVSX_PAT\s*[:=]\s*["\']?([A-Za-z0-9\-_]{20,})       # Open VSX environment variable
+OPENVSX_TOKEN\s*[:=]\s*["\']?([A-Za-z0-9\-_]{20,})  # Open VSX token variable
+OPENVSX_PAT\s*[:=]\s*["\']?([A-Za-z0-9\-_]{20,})    # Open VSX PAT variable
 ```
+⚠️ **Note**: VS Code Marketplace and Open VSX use Azure DevOps Personal Access Tokens (PATs). These tokens don't have a distinctive prefix format like GitHub tokens. This scanner detects them by looking for common environment variable names (`VSCE_PAT`, `OVSX_PAT`, etc.) with token-like values. This approach catches tokens in typical CI/CD configurations but may miss tokens stored with non-standard variable names.
+
+**Azure DevOps PATs**: Base32-encoded 256-bit keys, typically 52+ characters. No distinctive prefix pattern.
 
 ### Also Detects
 
@@ -73,6 +80,21 @@ OPENVSX_PAT\s*[:=]\s*["\']?([A-Za-z0-9\-_]{20,})    # Open VSX PAT
 - Private key headers in CI configurations
 
 See [src/rules.py](src/rules.py) for complete pattern definitions and scoring.
+
+### Pattern Limitations
+
+**What this scanner catches well:**
+- GitHub tokens with official prefixes
+- npm tokens in standard configurations
+- Marketplace tokens in commonly-named environment variables
+
+**What it may miss:**
+- VS Code/Open VSX tokens stored with custom variable names
+- Azure DevOps PATs without contextual environment variable names
+- Tokens split across multiple lines or obfuscated
+- Base64-encoded or encrypted tokens
+
+For comprehensive secret detection including pattern variations, use this tool alongside [gitleaks](https://github.com/gitleaks/gitleaks).
 
 ## Features
 
