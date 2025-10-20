@@ -18,7 +18,7 @@ setup(
     version="1.0.0",
     author="Rick Deacon",
     author_email="rick@knosticlabs.com",
-    description="Security scanner preventing IDE extension supply-chain attacks by detecting leaked marketplace tokens and credentials",
+    description="Lightweight scanner focused on detecting leaked IDE extension marketplace tokens (VS Code, Open VSX, npm)",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/rickdeaconx/marketplace-token-leak-hunter",

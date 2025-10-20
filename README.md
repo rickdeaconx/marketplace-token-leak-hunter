@@ -7,11 +7,23 @@
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
-A production-ready security scanner that detects leaked marketplace tokens, GitHub PATs, npm tokens, and other credentials in repositories and CI configuration files.
+A quick, focused scanner for detecting leaked marketplace tokens (VS Code, Open VSX, npm) in repositories and CI workflows.
 
 ## Overview
 
-This tool scans local repositories or fetches files from remote GitHub repositories to identify accidentally committed secrets. It uses pattern matching with severity scoring to minimize false positives and provides actionable reports in JSON and CSV formats.
+This is a lightweight, targeted tool specifically for finding marketplace publishing tokens that are often overlooked by general-purpose secret scanners. While comprehensive tools like [gitleaks](https://github.com/gitleaks/gitleaks) excel at detecting a wide range of secrets, this scanner focuses specifically on IDE extension marketplace tokens (VS Code, Open VSX) and related publishing credentials that may slip through.
+
+**When to use this tool:**
+- You're developing or publishing IDE extensions
+- You want a quick check specifically for marketplace tokens
+- You need a simple scanner focused on extension publishing workflows
+
+**When to use comprehensive tools like gitleaks:**
+- For general secret scanning across your entire codebase
+- When you need extensive secret detection rules (AWS, GCP, databases, etc.)
+- For enterprise-grade security scanning in CI/CD
+
+This tool complements, rather than replaces, comprehensive secret scanners.
 
 ### Why This Tool Exists
 
@@ -29,18 +41,52 @@ When extension developers inadvertently commit their marketplace tokens, attacke
 
 This tool helps prevent these supply-chain attacks by detecting leaked tokens before they're pushed to public repositories, enabling teams to rotate credentials and secure their release pipelines proactively.
 
+## Detection Patterns
+
+This scanner uses targeted regex patterns for marketplace-specific tokens:
+
+### Primary Marketplace Tokens
+
+**GitHub Personal Access Tokens (for GitHub Marketplace/Releases):**
+```regex
+ghp_[A-Za-z0-9_]{36,}  # GitHub personal access token
+gho_[A-Za-z0-9_]{36,}  # GitHub OAuth token
+ghu_[A-Za-z0-9_]{36,}  # GitHub user-to-server token
+ghs_[A-Za-z0-9_]{36,}  # GitHub server-to-server token
+ghr_[A-Za-z0-9_]{36,}  # GitHub refresh token
+```
+
+**npm Publishing Tokens:**
+```regex
+_authToken\s*=\s*[A-Za-z0-9\-_]{20,}           # npm _authToken in .npmrc
+NPM_TOKEN\s*[:=]\s*["\']?([A-Za-z0-9\-_]{20,}) # NPM_TOKEN env var
+```
+
+**Open VSX Marketplace:**
+```regex
+OPENVSX_TOKEN\s*[:=]\s*["\']?([A-Za-z0-9\-_]{20,})  # Open VSX token
+OPENVSX_PAT\s*[:=]\s*["\']?([A-Za-z0-9\-_]{20,})    # Open VSX PAT
+```
+
+### Also Detects
+
+- AWS access keys (for extension distribution via S3)
+- Azure client secrets (for Azure DevOps publishing)
+- Generic API keys and secrets in publishing workflows
+- Private key headers in CI configurations
+
+See [src/rules.py](src/rules.py) for complete pattern definitions and scoring.
+
 ## Features
 
-- Detects GitHub tokens (ghp_, gho_, ghu_, ghs_, ghr_ prefixes)
-- Identifies npm _authToken and NPM_TOKEN credentials
-- Finds Open VSX tokens and PATs
-- Recognizes AWS, Azure, and generic API keys
-- Scans CI workflows, .npmrc, Dockerfiles, and other high-risk files
-- Path-based risk scoring with +10 boost for sensitive locations
+- Focused detection for marketplace publishing tokens
+- Scans CI workflows (.github/workflows), .npmrc, package.json
+- Path-based risk scoring (+10 for CI files and config files)
 - Token redaction in reports (keeps first/last 4 chars)
 - Allowlist support for known false positives
 - Exit codes for CI integration (0=clean, 1=medium, 2=critical)
 - JSON and CSV report generation
+- Local and remote (GitHub API) scanning modes
 
 ## Quickstart - Local Usage
 
