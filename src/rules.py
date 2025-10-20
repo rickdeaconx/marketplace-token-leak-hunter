@@ -38,8 +38,14 @@ def get_rules() -> List[Dict]:
     """
     rules = [
         {
+            "id": "gh_token_fine_grained",
+            "description": "GitHub fine-grained personal access token (github_pat_ prefix)",
+            "pattern": re.compile(r"github_pat_[A-Za-z0-9_]{82}"),
+            "score": 95,
+        },
+        {
             "id": "gh_token_ghp",
-            "description": "GitHub personal access token (ghp_ prefix)",
+            "description": "GitHub personal access token classic (ghp_ prefix)",
             "pattern": re.compile(r"ghp_[A-Za-z0-9_]{36,}"),
             "score": 95,
         },

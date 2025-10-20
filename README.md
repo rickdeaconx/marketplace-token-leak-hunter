@@ -46,13 +46,16 @@ This scanner uses targeted regex patterns for marketplace-specific tokens:
 
 **GitHub Personal Access Tokens (for GitHub Marketplace/Releases):**
 ```regex
-ghp_[A-Za-z0-9_]{36,}  # GitHub personal access token
-gho_[A-Za-z0-9_]{36,}  # GitHub OAuth token
-ghu_[A-Za-z0-9_]{36,}  # GitHub user-to-server token
-ghs_[A-Za-z0-9_]{36,}  # GitHub server-to-server token
-ghr_[A-Za-z0-9_]{36,}  # GitHub refresh token
+github_pat_[A-Za-z0-9_]{82}  # Fine-grained PAT (recommended, 93 chars total)
+ghp_[A-Za-z0-9_]{36,}        # Classic PAT
+gho_[A-Za-z0-9_]{36,}        # GitHub OAuth token
+ghu_[A-Za-z0-9_]{36,}        # GitHub user-to-server token
+ghs_[A-Za-z0-9_]{36,}        # GitHub server-to-server token
+ghr_[A-Za-z0-9_]{36,}        # GitHub refresh token
 ```
 ✅ **Verified**: These are the official GitHub token formats (2025)
+- **Fine-grained PATs** (`github_pat_`) became GA in March 2025 and are now the recommended format
+- **Classic PATs** (`ghp_`) still in use but GitHub recommends migrating to fine-grained
 
 **npm Publishing Tokens:**
 ```regex
