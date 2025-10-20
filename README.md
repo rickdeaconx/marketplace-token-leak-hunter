@@ -7,23 +7,20 @@
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
-A quick, focused scanner for detecting leaked marketplace tokens (VS Code, Open VSX, npm) in repositories and CI workflows.
+A fast, targeted scanner specialized in detecting leaked marketplace tokens (VS Code, Open VSX, npm) in repositories and CI workflows.
 
 ## Overview
 
-This is a lightweight, targeted tool specifically for finding marketplace publishing tokens that are often overlooked by general-purpose secret scanners. While comprehensive tools like [gitleaks](https://github.com/gitleaks/gitleaks) excel at detecting a wide range of secrets, this scanner focuses specifically on IDE extension marketplace tokens (VS Code, Open VSX) and related publishing credentials that may slip through.
+This scanner is purpose-built for the specific threat of leaked marketplace publishing tokens—credentials that extension developers use daily but that often slip through general-purpose scanners. It's designed to run fast, integrate easily into your workflow, and catch the marketplace-specific patterns that matter most for supply-chain security.
 
-**When to use this tool:**
-- You're developing or publishing IDE extensions
-- You want a quick check specifically for marketplace tokens
-- You need a simple scanner focused on extension publishing workflows
+**What makes this scanner valuable:**
+- **Fast & focused**: Optimized specifically for marketplace token patterns
+- **Easy integration**: Drop into CI/CD in minutes, works alongside existing security tools
+- **Marketplace-specific**: Catches VS Code, Open VSX, and npm publishing tokens that generic scanners may miss
+- **Developer-friendly**: Clear output, low false positives, practical remediation guidance
 
-**When to use comprehensive tools like gitleaks:**
-- For general secret scanning across your entire codebase
-- When you need extensive secret detection rules (AWS, GCP, databases, etc.)
-- For enterprise-grade security scanning in CI/CD
-
-This tool complements, rather than replaces, comprehensive secret scanners.
+**Your security toolkit:**
+Use this scanner alongside tools like [gitleaks](https://github.com/gitleaks/gitleaks) for comprehensive coverage. While gitleaks provides broad secret detection, this tool specializes in marketplace tokens—a critical attack vector for extension supply chains. Deploy both for defense in depth.
 
 ### Why This Tool Exists
 
@@ -401,6 +398,17 @@ To report a suspected token leak in a public repository, please use the [issue t
 
 For security issues in this tool itself, contact the maintainers directly.
 
+## Built with Claude Code
+
+This entire security scanner was developed using [Claude Code](https://claude.ai/code), Anthropic's AI-powered coding assistant. The tool was built with security as a first principle:
+
+- **No real secrets**: All development used FAKE tokens with clear prefixes
+- **Secure by design**: Token redaction, input validation, and safe file handling built in from the start
+- **Tested thoroughly**: Self-scanned (dogfooding) to validate detection accuracy
+- **Open source**: Full code transparency for security review
+
+Claude Code enabled rapid development of a secure, functional scanner with comprehensive testing and documentation—demonstrating how AI coding tools can accelerate security tooling when used responsibly.
+
 ## Contributing
 
 Contributions welcome. When adding new detection rules:
@@ -411,7 +419,7 @@ Contributions welcome. When adding new detection rules:
 
 ---
 
-**Warning:** This tool performs static analysis only. It cannot detect:
+**Note:** This tool performs static analysis only. It cannot detect:
 - Tokens retrieved at runtime
 - Encrypted or encoded secrets (without decoding logic)
 - Secrets in compiled binaries
