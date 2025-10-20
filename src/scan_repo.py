@@ -10,7 +10,6 @@ Licensed under the MIT License
 """
 
 import argparse
-import json
 import os
 import sys
 from typing import List, Dict, Any
@@ -191,7 +190,7 @@ def print_summary(findings: List[Dict[str, Any]]) -> None:
     if medium:
         print(f"  MEDIUM (score < 70): {len(medium)} finding(s)")
 
-    print(f"\nSee full report in output files.\n")
+    print("\nSee full report in output files.\n")
 
 
 def main():

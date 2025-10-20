@@ -7,18 +7,18 @@ Copyright (c) 2025 Rick Deacon / Knostic Labs
 Licensed under the MIT License
 """
 
-import os
-import sys
 import json
-import tempfile
+import os
 import subprocess
+import sys
+import tempfile
 from pathlib import Path
 
-# Add src to path
+# Add src to path (must be before local imports)
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from src.scan_repo import scan_path, determine_exit_code
-from src.utils import redact_token
+from src.scan_repo import scan_path, determine_exit_code  # noqa: E402
+from src.utils import redact_token  # noqa: E402
 
 
 def test_redact_token():
